@@ -131,11 +131,20 @@ class _AllProductsState extends State<AllProducts> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.pink[900],
           title: Text("All Products"),
+          elevation: 0,
           actions: [],
+          // flexibleSpace: Container(
+          //   decoration: BoxDecoration(
+          //       gradient: LinearGradient(tileMode: TileMode.mirror,
+          //           // begin: Alignment.topLeft,
+          //           // end: Alignment.bottomRight,
+          //           colors: <Color>[Colors.pink[900]!, Colors.pink])),
+          // ),
         ),
         backgroundColor: Colors.grey[100],
         body: isLoading
@@ -143,11 +152,30 @@ class _AllProductsState extends State<AllProducts> {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _displayTagWidget(),
-                  Divider(
-                    color: Colors.yellow[50],
-                    thickness: 10,
-                  ),
+                  Container(
+                      padding: EdgeInsets.only(bottom: 4),
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              tileMode: TileMode.mirror,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: <Color>[
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[900]!,
+                            Colors.pink[100]!,
+                            // Colors.black54
+                          ])),
+                      child: _displayTagWidget()),
+                  // Divider(
+                  //   color: Colors.yellow[50],
+                  //   thickness: 10,
+                  // ),
                   // Wrap(alignment: WrapAlignment.start, children: tags.toList()),
                   searchResults.isEmpty
                       ? Padding(
@@ -161,45 +189,49 @@ class _AllProductsState extends State<AllProducts> {
                             child: Text("No Product Found!!"),
                           ),
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: searchResults.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: ListTile(
-                                tileColor: Colors.white,
-                                title:
-                                    Text(searchResults[index].name.toString()),
-                                leading: Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    // backgroundColor: Colors.white,
-                                    // minRadius: 10,
-                                    child: Image.network(
-                                      searchResults[index].productpic!,
-                                      fit: BoxFit.fill,
+                      : Expanded(
+                          child: ListView.builder(
+                              // shrinkWrap: true,
+                              itemCount: searchResults.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  child: ListTile(
+                                    tileColor: Colors.white,
+                                    title: Text(
+                                        searchResults[index].name.toString()),
+                                    leading: Container(
+                                      height: 60,
+                                      width: 60,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        // backgroundColor: Colors.white,
+                                        // minRadius: 10,
+                                        child: Image.network(
+                                          searchResults[index].productpic!,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
                                     ),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddProduct(
+                                                        productId:
+                                                            shoppingController
+                                                                .products[index]
+                                                                .pid,
+                                                      )));
+                                        },
+                                        icon: Icon(Icons.arrow_forward_ios)),
                                   ),
-                                ),
-                                trailing: IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AddProduct(
-                                                    productId:
-                                                        shoppingController
-                                                            .products[index]
-                                                            .pid,
-                                                  )));
-                                    },
-                                    icon: Icon(Icons.arrow_forward_ios)),
-                              ),
-                            );
-                          }),
+                                );
+                              }),
+                        ),
                 ],
               ));
   }

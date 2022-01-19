@@ -26,10 +26,24 @@ class DatabaseService {
     return querySnapshot;
   }
 
-  getCollectionWhere(collection, doc) async {
+  getCollectionWhere(collection, doc, {String wherequery: 'signInMob'}) async {
     var querySnapshot = await FirebaseFirestore.instance
         .collection(collection)
-        .where('signInMob', isEqualTo: doc)
+        .where(wherequery, isEqualTo: doc)
+        .get();
+    return querySnapshot;
+  }
+
+  getCollectionWhereAnd(
+      {required collection,
+      required wherefirst,
+      required firstmatch,
+      required wheresecond,
+      required secondmatch}) async {
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection(collection)
+        .where(wherefirst, isEqualTo: firstmatch)
+        .where(wheresecond, isEqualTo: secondmatch)
         .get();
     return querySnapshot;
   }
@@ -202,6 +216,28 @@ class DatabaseService {
       "maxSaleQty": maxSaleQty,
       "stock": stock
     });
+  }
+
+  Future newSubCategory(
+      {required String category, required List subcategory}) async {
+    await FirebaseFirestore.instance
+        .collection('SubCategory')
+        .doc('subcategory')
+        .set({
+      category: FieldValue.arrayUnion(subcategory),
+    }, SetOptions(merge: true));
+  }
+
+  Future deleteSubCategory(
+      {required String category, required List subcategory}) async {
+    await FirebaseFirestore.instance
+        .collection('SubCategory')
+        .doc('subcategory')
+        .update(
+      {
+        category: subcategory,
+      },
+    );
   }
 
   Future newBanner(

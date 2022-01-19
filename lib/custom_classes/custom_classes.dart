@@ -222,7 +222,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                 underline: SizedBox(),
                 onChanged: (dynamic val) {
                   setState(() {
-                    _selected = val.toString();
+                    _selected = val;
                     print(val);
                     widget.callBack(_selected!);
                     // _selectedCare = val.toString();

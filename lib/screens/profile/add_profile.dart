@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dns/app_constants.dart';
 import 'package:dns/app_properties.dart';
 import 'package:dns/custom_functions/custom_functions.dart';
 import 'package:dns/custom_widgets/widgets.dart';
@@ -61,31 +62,32 @@ class _ProfileState extends State<Profile> {
             pincodeController.text,
             imgUrl)
         .then((value) {
-      GetStorage().write('name', value);
+      customToast("Profile has been saved successfully !");
+      Navigator.of(context).pop();
 
-      return AwesomeDialog(
-          context: context,
-          animType: AnimType.LEFTSLIDE,
-          headerAnimationLoop: false,
-          dialogType: DialogType.SUCCES,
-          showCloseIcon: true,
-          title: 'Success!!',
-          desc: 'Profile has been saved successfully !',
-          btnOkOnPress: () {
-            debugPrint('OnClcik');
-            // Navigator.of(context).pop();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
-          },
-          btnOkIcon: Icons.check_circle,
-          onDissmissCallback: (type) {
-            // Navigator.of(context).pop();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
+      // return AwesomeDialog(
+      //     context: context,
+      //     animType: AnimType.LEFTSLIDE,
+      //     headerAnimationLoop: false,
+      //     dialogType: DialogType.SUCCES,
+      //     showCloseIcon: true,
+      //     title: 'Success!!',
+      //     desc: 'Profile has been saved successfully !',
+      //     btnOkOnPress: () {
+      //       debugPrint('OnClcik');
+      //       // Navigator.of(context).pop();
+      //       Navigator.pushReplacement(
+      //           context, MaterialPageRoute(builder: (context) => MainPage()));
+      //     },
+      //     btnOkIcon: Icons.check_circle,
+      //     onDissmissCallback: (type) {
+      //       // Navigator.of(context).pop();
+      //       Navigator.pushReplacement(
+      //           context, MaterialPageRoute(builder: (context) => MainPage()));
 
-            // debugPrint('Dialog Dissmiss from callback $type');
-          })
-        ..show();
+      //       // debugPrint('Dialog Dissmiss from callback $type');
+      //     })
+      //   ..show();
     });
   }
 
@@ -369,6 +371,10 @@ class _ProfileState extends State<Profile> {
                           headingsize: 13),
                       InkWell(
                           onTap: () {
+                            box.write(GetStorageConstants.signInName,
+                                nameController.text);
+                            box.write(GetStorageConstants.signInMob,
+                                mobController.text);
                             saveProfile(profilePic, box.read('mob'));
                           },
                           child: customButton("Save"))

@@ -27,7 +27,30 @@ Widget gridviewRecent = Padding(
           : Container();
     }));
 
-Widget gridviewTopSellers = Padding(
+Widget gridviewOnly(controller, String controllerFor) {
+  var rproducts;
+  if (controllerFor == 'TOPSELLERS') {
+    rproducts = controller.products;
+  } else if (controllerFor == 'RENTED') {
+    rproducts = controller.rentedProducts;
+  }
+
+  return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          // childAspectRatio: 1 / 1,
+          mainAxisExtent: 270,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 10),
+      itemCount: rproducts.length,
+      itemBuilder: (BuildContext ctx, index) {
+        return ProductGrid(product: rproducts[index]);
+      });
+}
+
+Widget gridviewTopRented = Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: GetBuilder<ShoppingController>(builder: (controller) {
       return GridView.builder(

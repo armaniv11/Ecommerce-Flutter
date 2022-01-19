@@ -52,7 +52,7 @@ class ProductModel {
       this.reviews,
       this.selectedAudience,
       this.maxSaleQty = 2,
-      this.uom = 'pcs.',
+      this.uom = 'pcs',
       this.taxPercent = "0%",
       this.stock = 10,
       this.rentAmount = 0,

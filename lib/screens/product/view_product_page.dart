@@ -1,3 +1,4 @@
+import 'package:dns/app_constants.dart';
 import 'package:dns/controller.dart/cartController.dart';
 import 'package:dns/controller.dart/productCategoryController.dart';
 import 'package:dns/controller.dart/recentController.dart';
@@ -306,7 +307,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     children: [
                       Text(
                         "Category: ",
-                        textAlign: TextAlign.justify,
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         widget.product!.category ?? "",
@@ -315,6 +316,24 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     ],
                   ),
                 ),
+                widget.product!.category == AppConstants.categoryClothes
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Wash Care: ",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              widget.product!.careInstructions ?? "",
+                              textAlign: TextAlign.justify,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

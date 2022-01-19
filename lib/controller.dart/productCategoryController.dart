@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dns/app_constants.dart';
+import 'package:dns/functions/database.dart';
 import 'package:dns/models/productmodel.dart';
 import 'package:dns/screens/gallery/product_categories.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +13,55 @@ class ProductCategoryController extends GetxController {
   List<ProductModel> beauty = <ProductModel>[].obs;
   List<ProductModel> home = <ProductModel>[].obs;
 
+  Map<String, dynamic> subCategoryList = {};
+
   int get countGadgets => gadgets.length;
   int get countClothes => clothes.length;
   int get countBeauty => beauty.length;
   int get countHome => home.length;
 
+  DatabaseService databaseService = DatabaseService();
   // double get cartPrice =>
   //     cartItems.fold(0, (sum, element) => sum + element.price!);
+
+  @override
+  Future<void> onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    await loadSubCategory();
+    // products = await getData();
+    // rentedProducts = await getRentedProducts();
+  }
+
+  loadSubCategory() async {
+    print("printing subc");
+    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+        .collection('SubCategory')
+        .doc('subcategory')
+        .get();
+    subCategoryList = docSnapshot.data() as Map<String, dynamic>;
+    print(subCategoryList);
+  }
+
+  removeSubCategory(cat, subcat) async {
+    List subcateg = subCategoryList[cat];
+    subcateg.removeWhere((item) => item == subcat);
+    subCategoryList[cat] = subcateg;
+    print("printing from remvoe tosub cate");
+    await databaseService.deleteSubCategory(
+        category: cat, subcategory: subcateg);
+
+    print(subCategoryList);
+  }
+
+  addToSubCategory(cat, subcat) async {
+    List subcateg = subCategoryList[cat];
+    subcateg.removeWhere((item) => item == subcat);
+    subcateg.add(subcat);
+    subCategoryList[cat] = subcateg;
+    print("printing from add tosub cate");
+    print(subCategoryList);
+  }
 
   Future<List<ProductModel>> setBeauty({required category}) async {
     beauty = await getData(categoryname: category);

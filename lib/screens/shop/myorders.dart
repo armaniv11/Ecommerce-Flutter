@@ -7,12 +7,14 @@ import 'package:dns/models/reviewModel.dart';
 import 'package:dns/screens/product/components/rating_bottomSheet.dart';
 import 'package:dns/screens/product/components/rating_review.dart';
 import 'package:dns/screens/shop/cart.dart';
+import 'package:dns/screens/shop/components/tracking_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:jiffy/jiffy.dart';
 
+import '../../app_constants.dart';
 import '../../app_properties.dart';
 import 'confirm_order.dart';
 
@@ -27,6 +29,7 @@ class _MyOrdersState extends State<MyOrders> {
   DatabaseService databaseService = DatabaseService();
   final box = GetStorage();
   bool iSLoading = true;
+
   @override
   void initState() {
     loadOrder();
@@ -35,20 +38,77 @@ class _MyOrdersState extends State<MyOrders> {
   }
 
   late var orders;
+  late var allOrders;
   loadOrder() async {
     orders =
         await databaseService.getCollectionWhere('Orders', box.read('mob'));
+    allOrders = orders;
+    setState(() {
+      iSLoading = false;
+    });
+  }
+
+  loadOrderFilter() async {
+    orders = await databaseService.getCollectionWhereAnd(
+        collection: 'Orders',
+        wherefirst: 'signInMob',
+        firstmatch: box.read('mob'),
+        wheresecond: 'orderStatus',
+        secondmatch: AppConstants.orderOptions[selectedIndex]);
 
     setState(() {
       iSLoading = false;
     });
   }
 
+  Widget _buildSuggestionWidget() {
+    return Wrap(alignment: WrapAlignment.start, children: techChips().toList());
+  }
+
+  int selectedIndex = 0;
+
+  List<Widget> techChips() {
+    List<Widget> chips = [];
+    for (int i = 0; i < AppConstants.orderOptions.length; i++) {
+      Widget item = Padding(
+        padding: const EdgeInsets.only(left: 4, right: 4),
+        child: ChoiceChip(
+          label: Text(AppConstants.orderOptions[i]),
+          labelStyle: TextStyle(color: Colors.white),
+          backgroundColor: Colors.grey[400],
+          shadowColor: Colors.yellow,
+          selectedShadowColor: Colors.yellow,
+          selectedColor: Colors.green,
+          selected: selectedIndex == i,
+          onSelected: (bool value) {
+            setState(() {
+              iSLoading = true;
+            });
+            selectedIndex = i;
+            print("Selected Index is $selectedIndex");
+            if (i == 0) {
+              setState(() {
+                orders = allOrders;
+                iSLoading = false;
+              });
+            } else {
+              loadOrderFilter();
+            }
+          },
+        ),
+      );
+      chips.add(item);
+    }
+    return chips;
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.pink[900],
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
@@ -62,29 +122,48 @@ class _MyOrdersState extends State<MyOrders> {
         ),
         body: iSLoading
             ? Center(child: CircularProgressIndicator())
-            : orders.docs.length == 0
-                ? EmptyCartShow(emptyText: "No orders have been made by you!!")
-                : SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: orders.docs.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return CartListMyOrder(
-                                product: orders.docs[index],
-                              );
-                            })
-                      ],
-                    ),
-                  ));
+            : Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    width: double.maxFinite,
+                    color: Colors.pink[900],
+                    child: _buildSuggestionWidget(),
+                  ),
+                  // Divider(
+                  //   thickness: 10,
+                  //   color: Colors.grey[400],
+                  // ),
+                  orders.docs.length == 0
+                      ? EmptyCartShow(
+                          emptyText: "No orders have been made by you!!")
+                      : Expanded(
+                          child: ListView.builder(
+                              // shrinkWrap: true,
+                              itemCount: orders.docs.length,
+                              // physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return CartListMyOrder(
+                                  product: orders.docs[index],
+                                );
+                              }),
+                        )
+                ],
+              ));
   }
 }
 
 class CartListMyOrder extends StatelessWidget {
   final product;
   CartListMyOrder({required this.product});
+  Map<String, int> trackMap = {
+    "Ordered": 0,
+    "Shipped": 1,
+    "Delivered": 2,
+    "Cancelled": 2,
+    "Refunded": 2
+  };
+
   Widget rowTwoChild(child1, child2,
       {bool iconshow: false,
       IconData icon: Icons.add,
@@ -147,13 +226,14 @@ class CartListMyOrder extends StatelessWidget {
           child: customText("Order Details", fontWeight: FontWeight.bold),
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 8, bottom: 4),
               child: RichText(
                 text: TextSpan(
-                  text: 'Ordered on ',
+                  text: 'Order date ',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontFamily: 'Montserrat',
@@ -169,35 +249,13 @@ class CartListMyOrder extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(
+                height: 20,
+                child: VerticalDivider(
+                  color: Colors.grey,
+                )),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 8, top: 4, bottom: 4, right: 8),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Status ',
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                      fontFamily: 'Montserrat'),
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: product['orderStatus'],
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Montserrat',
-                            fontSize: 12,
-                            color: Colors.grey[800])),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 8, bottom: 4),
+              padding: const EdgeInsets.only(right: 8, bottom: 4),
               child: RichText(
                 text: TextSpan(
                   text: 'Order No ',
@@ -216,30 +274,36 @@ class CartListMyOrder extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8, top: 4, bottom: 4, right: 8),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Sold to  ',
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                      fontFamily: 'Montserrat'),
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: product['soldTo'],
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Montserrat',
-                            fontSize: 12,
-                            color: Colors.grey[800])),
-                  ],
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding:
+            //       const EdgeInsets.only(left: 8, top: 4, bottom: 4, right: 8),
+            //   child: RichText(
+            //     text: TextSpan(
+            //       text: 'Status ',
+            //       style: TextStyle(
+            //           color: Colors.grey[600],
+            //           fontSize: 12,
+            //           fontFamily: 'Montserrat'),
+            //       children: <TextSpan>[
+            //         TextSpan(
+            //             text: product['orderStatus'],
+            //             style: TextStyle(
+            //                 fontWeight: FontWeight.bold,
+            //                 fontFamily: 'Montserrat',
+            //                 fontSize: 12,
+            //                 color: Colors.grey[800])),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
+        TrackingList(
+          activestep: trackMap[product['orderStatus']]!,
+          icons: AppConstants.trackingIconSingle,
+          lineLength: 60,
+        ),
+
         Divider(
           thickness: 1.5,
         ),

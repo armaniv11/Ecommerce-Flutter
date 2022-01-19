@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dns/admin/order_detail.dart';
+import 'package:dns/app_constants.dart';
 import 'package:dns/custom_widgets/widgets.dart';
 import 'package:dns/functions/database.dart';
 import 'package:dns/models/productmodel.dart';
@@ -36,8 +37,10 @@ class _AllOrdersState extends State<AllOrders> {
   }
 
   late var orders;
+  late var allOrders;
   loadOrder() async {
     orders = await databaseService.getCollection('Orders');
+    allOrders = orders;
     orders.docs.forEach((element) {
       print(element['cartTotal']);
     });
@@ -46,11 +49,68 @@ class _AllOrdersState extends State<AllOrders> {
     });
   }
 
+  loadOrderWhere() async {
+    print(AppConstants.orderOptions[selectedIndex]);
+    orders = await databaseService.getCollectionWhere(
+        'Orders', AppConstants.orderOptions[selectedIndex],
+        wherequery: 'orderStatus');
+    // allOrders = orders;
+    print(orders.docs.length);
+    orders.docs.forEach((element) {
+      print(element['cartTotal']);
+    });
+    setState(() {
+      iSLoading = false;
+    });
+  }
+
+  Widget _buildSuggestionWidget() {
+    return Wrap(alignment: WrapAlignment.start, children: techChips().toList());
+  }
+
+  int selectedIndex = 0;
+
+  List<Widget> techChips() {
+    List<Widget> chips = [];
+    for (int i = 0; i < AppConstants.orderOptions.length; i++) {
+      Widget item = Padding(
+        padding: const EdgeInsets.only(left: 4, right: 4),
+        child: ChoiceChip(
+          label: Text(AppConstants.orderOptions[i]),
+          labelStyle: TextStyle(color: Colors.white),
+          backgroundColor: Colors.grey[400],
+          shadowColor: Colors.yellow,
+          selectedShadowColor: Colors.yellow,
+          selectedColor: Colors.green,
+          selected: selectedIndex == i,
+          onSelected: (bool value) {
+            setState(() {
+              iSLoading = true;
+            });
+            selectedIndex = i;
+            print("Selected Index is $selectedIndex");
+            if (i == 0) {
+              setState(() {
+                orders = allOrders;
+                iSLoading = false;
+              });
+            } else {
+              loadOrderWhere();
+            }
+          },
+        ),
+      );
+      chips.add(item);
+    }
+    return chips;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.pink[900],
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
@@ -59,21 +119,31 @@ class _AllOrdersState extends State<AllOrders> {
           ),
         ),
         body: iSLoading
-            ? CircularProgressIndicator()
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.builder(
-                        shrinkWrap: true,
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    color: Colors.pink[900],
+                    width: double.maxFinite,
+                    child: _buildSuggestionWidget(),
+                  ),
+                  // Divider(
+                  //   thickness: 10,
+                  //   color: Colors.grey[400],
+                  // ),
+                  Expanded(
+                    child: ListView.builder(
+                        // shrinkWrap: true,
                         itemCount: orders.docs.length,
-                        physics: NeverScrollableScrollPhysics(),
+                        // physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           return CartListMyOrder(
                             product: orders.docs[index],
                           );
-                        })
-                  ],
-                ),
+                        }),
+                  )
+                ],
               ));
   }
 }

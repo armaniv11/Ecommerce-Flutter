@@ -180,7 +180,7 @@ class _IntroPageState extends State<IntroPage> {
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                      builder: (context) => Profile()));
+                                      builder: (context) => MainPage()));
                             },
                           ),
                         ),

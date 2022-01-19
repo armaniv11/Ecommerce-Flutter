@@ -29,6 +29,7 @@ import 'package:dns/screens/shop/cart.dart';
 import 'package:dns/screens/shop/check_out_page.dart';
 import 'package:dns/screens/shop/wishlist.dart';
 import 'package:dns/screens/sidebar.dart';
+import 'package:dns/screens/tracking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
@@ -230,9 +231,17 @@ class _MainPageState extends State<MainPage>
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ImageIcon(
-                            AssetImage('assets/icons/notification.png'),
-                            size: 20,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TrackingPage()));
+                            },
+                            child: ImageIcon(
+                              AssetImage('assets/icons/notification.png'),
+                              size: 20,
+                            ),
                           ),
                         ),
                         // IconButton(
@@ -265,7 +274,8 @@ class _MainPageState extends State<MainPage>
                       // centerTitle: true,
                       // expandedHeight: size.height / 6.6,
                       title: Text(
-                        "Vinamra Jaiswal",
+                        GetStorage().read(GetStorageConstants.signInName) ??
+                            "Hi! User",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -357,7 +367,11 @@ class _MainPageState extends State<MainPage>
                                 text2: " Sellers",
                                 text3: "View All",
                               )),
-                          gridviewTopSellers,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child:
+                                gridviewOnly(shoppingController, 'TOPSELLERS'),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Divider(
@@ -365,6 +379,23 @@ class _MainPageState extends State<MainPage>
                               color: Colors.grey[200],
                             ),
                           ),
+                          // Padding(
+                          //     padding: const EdgeInsets.all(8.0),
+                          //     child: CustomHeaderWithView(
+                          //       text1: "Top",
+                          //       text2: " Rented",
+                          //       text3: "View All",
+                          //     )),
+                          // // gridviewTopSellers,
+                          // gridviewOnly(shoppingController, 'RENTED'),
+
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(vertical: 20),
+                          //   child: Divider(
+                          //     thickness: 8,
+                          //     color: Colors.grey[200],
+                          //   ),
+                          // ),
                           GetX<RecentController>(builder: (controller) {
                             return controller.countitems < 7 &&
                                     controller.countitems > 0

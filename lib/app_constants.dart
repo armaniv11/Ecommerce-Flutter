@@ -8,6 +8,39 @@ class AppConstants {
   static String categoryBeauty = 'Beauty';
   static String categoryHome = 'Home';
   static String categoryMisc = 'Miscellaneous';
+  static List<Icon> trackingIconOrder = [
+    Icon(
+      Icons.shopping_cart,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.local_shipping,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.monetization_on_sharp,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.done_all,
+      color: Colors.white,
+    )
+  ];
+
+  static List<Icon> trackingIconSingle = [
+    Icon(
+      Icons.shopping_cart,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.local_shipping,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.done_all,
+      color: Colors.white,
+    )
+  ];
 
   static String cart = 'CART';
   static String wishlist = 'WISHLIST';
@@ -81,6 +114,24 @@ class AppConstants {
       'Appliances',
       'assets/jeans_5.png',
     ),
+  ];
+
+  // category String List
+  static List<String> categoryListString = [
+    categoryClothes,
+    categoryBeauty,
+    categoryGadget,
+    categoryHome,
+    categoryMisc
+  ];
+
+  static List<String> orderOptions = [
+    'All',
+    'Ordered',
+    'Shipped',
+    'Delivered',
+    'Cancelled',
+    'Refunded'
   ];
 }
 

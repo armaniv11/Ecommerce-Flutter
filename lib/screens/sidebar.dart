@@ -2,6 +2,7 @@ import 'package:dns/admin/add_banner.dart';
 import 'package:dns/admin/add_product.dart';
 import 'package:dns/admin/all_orders.dart';
 import 'package:dns/admin/all_products.dart';
+import 'package:dns/admin/all_subcategory.dart';
 import 'package:dns/app_constants.dart';
 import 'package:dns/screens/auth/register_page_phone.dart';
 import 'package:dns/screens/profile/add_profile.dart';
@@ -77,7 +78,10 @@ class _SideBarState extends State<SideBar> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('Vinamra Jaiswal',
+                                Text(
+                                    GetStorage().read(
+                                            GetStorageConstants.signInName) ??
+                                        "",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -121,7 +125,7 @@ class _SideBarState extends State<SideBar> {
                         height: 10,
                       ),
                       Divider(
-                        color: Colors.white,
+                        color: Colors.pink[900],
                         thickness: 6,
                       ),
                       // SizedBox(
@@ -165,6 +169,26 @@ class _SideBarState extends State<SideBar> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => AddProduct()))
+                                  })
+                          : Container(),
+                      Divider(
+                        color: Colors.white,
+                        thickness: 2,
+                      ),
+                      role == 'teacher' || role == 'admin'
+                          ? ListTile(
+                              dense: true,
+                              leading: Icon(Icons.add, color: Colors.grey[50]),
+                              title: Text(
+                                'Sub-Categories',
+                                style: TextStyle(color: Colors.grey[50]),
+                              ),
+                              onTap: () => {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AllSubCategory()))
                                   })
                           : Container(),
                       Divider(

@@ -17,6 +17,14 @@ class ProductGrid extends StatefulWidget {
 final WishListController wishListController = Get.find();
 
 class _ProductGridState extends State<ProductGrid> {
+  bool isRented = false;
+  @override
+  void initState() {
+    isRented = widget.product!.onRent!;
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -88,6 +96,14 @@ class _ProductGridState extends State<ProductGrid> {
             child: customText(widget.product!.name!,
                 size: 12, fontWeight: FontWeight.bold),
           ),
+          // isRented
+          //         ? Padding(
+          //             padding: const EdgeInsets.only(left: 4),
+          //             child: iconWithText(FontAwesomeIcons.rupeeSign, 10.0,
+          //                 "${widget.product!.rentAmount} / Day",
+          //                 color: Colors.pink),
+          //           )
+          // :
           Row(
             children: [
               Padding(

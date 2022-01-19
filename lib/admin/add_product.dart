@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dns/app_constants.dart';
 import 'package:dns/app_properties.dart';
 import 'package:dns/custom_classes/custom_classes.dart';
 import 'package:dns/custom_widgets/widgets.dart';
@@ -35,15 +36,15 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController maxOrderController = TextEditingController();
   TextEditingController inStockController = TextEditingController(text: "1");
 
-  String? _selectedCategory = '';
+  String? _selectedCategory = AppConstants.categoryMisc;
   String? _selectedCare = '';
   String? _selectedGST = '0%';
   String? _selectedUOM = "Pcs";
   String labelText = 'Add Product';
   String? netImage = '';
 
-  List<String> categoryMenu = ['', 'Gadget', 'Clothes', 'Beauty'];
-  List<String> productAudience = ['', 'Male', 'Female', 'Kids', 'All'];
+  List<String> categoryMenu = AppConstants.categoryListString;
+  List<String> subCategory = [];
 
   List<String> careMenu = [
     '',
@@ -129,7 +130,7 @@ class _AddProductState extends State<AddProduct> {
                   double.tryParse(deliveryChargeController.text) ?? 0.0,
               replaceable: isReplacable,
               pid: widget.productId,
-              audience: selectedAudience,
+              audience: selectedSubCategory,
               taxPercent: _selectedGST,
               uom: _selectedUOM,
               maxSaleQty: int.tryParse(maxOrderController.text) ?? 1,
@@ -198,7 +199,7 @@ class _AddProductState extends State<AddProduct> {
                   double.tryParse(deliveryChargeController.text) ?? 0.0,
               replaceable: isReplacable,
               pid: pid,
-              audience: selectedAudience,
+              audience: selectedSubCategory, // audience is now sub category
               taxPercent: _selectedGST,
               uom: _selectedUOM,
               maxSaleQty: int.tryParse(maxOrderController.text) ?? 1,
@@ -230,7 +231,7 @@ class _AddProductState extends State<AddProduct> {
     // print(profilepic);
   }
 
-  String selectedAudience = '';
+  String selectedSubCategory = '';
   void selectCategory(String selected) {
     setState(() {
       _selectedCategory = selected;
@@ -249,9 +250,9 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
-  void selectAudience(String selected) {
+  void selectSubCategory(String selected) {
     setState(() {
-      selectedAudience = selected;
+      selectedSubCategory = selected;
     });
   }
 
@@ -318,10 +319,11 @@ class _AddProductState extends State<AddProduct> {
         productController.text = pro.name!;
         priceController.text = pro.price.toString();
         salePriceController.text = pro.saleprice.toString();
-        print(pro.taxPercent);
+        print("printing uom");
+        print(pro.uom);
         setState(() {
           _selectedGST = pro.taxPercent;
-          _selectedUOM = pro.uom ?? "Kg";
+          _selectedUOM = pro.uom ?? "Pcs";
           maxOrderController.text =
               pro.maxSaleQty == null ? "2" : pro.maxSaleQty.toString();
           inStockController.text =
@@ -329,7 +331,7 @@ class _AddProductState extends State<AddProduct> {
           descriptionController.text = pro.desc!;
           _selectedCare = pro.careInstructions ?? "";
           _selectedCategory = pro.category ?? "";
-          selectedAudience = pro.selectedAudience ?? "";
+          selectedSubCategory = pro.selectedAudience ?? "";
           isFeatured = pro.isFeatured!;
           isRentable = pro.onRent;
           rentController.text =
@@ -454,11 +456,13 @@ class _AddProductState extends State<AddProduct> {
                         items: categoryMenu,
                         callBack: selectCategory,
                         selected: _selectedCategory),
-                    CustomDropDown(
-                        heading: "Product Audience",
-                        items: productAudience,
-                        selected: selectedAudience,
-                        callBack: selectAudience),
+                    _selectedCategory == null || _selectedCategory == ""
+                        ? Container()
+                        : CustomDropDown(
+                            heading: "Sub Category",
+                            items: subCategory,
+                            selected: selectedSubCategory,
+                            callBack: selectSubCategory),
                     CustomCheckBox(
                       text: "Is Featured",
                       option: isFeatured,

@@ -27,7 +27,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       reviews: json['reviews'] as Map<String, dynamic>?,
       selectedAudience: json['selectedAudience'] as String?,
       maxSaleQty: json['maxSaleQty'] as int? ?? 2,
-      uom: json['uom'] as String? ?? 'pcs.',
+      uom: json['uom'] as String? ?? 'pcs',
       taxPercent: json['taxPercent'] as String? ?? "0%",
       stock: (json['stock'] as num?)?.toDouble() ?? 10,
       rentAmount: (json['rentAmount'] as num?)?.toDouble() ?? 0,

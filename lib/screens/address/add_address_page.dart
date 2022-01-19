@@ -1,9 +1,11 @@
+import 'package:dns/app_constants.dart';
 import 'package:dns/controller.dart/cartController.dart';
 import 'package:dns/custom_widgets/widgets.dart';
 import 'package:dns/functions/database.dart';
 import 'package:dns/models/productmodel.dart';
 import 'package:dns/screens/main/main_page.dart';
 import 'package:dns/screens/select_card_page.dart';
+import 'package:dns/screens/shop/components/tracking_list.dart';
 import 'package:dns/screens/shop/confirm_order.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -166,140 +168,141 @@ class _AddAddressPageState extends State<AddAddressPage> {
               fontSize: 18.0),
         ),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : LayoutBuilder(
-              builder: (_, viewportConstraints) => SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints:
-                      BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        // left: 6.0,
-                        // right: 6.0,
-                        bottom: MediaQuery.of(context).padding.bottom == 0
-                            ? 10
-                            : MediaQuery.of(context).padding.bottom),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Card(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 10),
-                                color: Colors.white,
-                                elevation: 3,
-                                child: SizedBox(
-                                    height: 80,
-                                    width: 160,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Image.asset(
-                                                'assets/icons/address_home.png'),
-                                          ),
-                                          Text(
-                                            'Add New Address',
-                                            style: TextStyle(
-                                              fontSize: 8,
-                                              color: darkGrey,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ),
-                                    ))),
-                            Card(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 10),
-                                color: yellow,
-                                elevation: 3,
-                                child: SizedBox(
-                                    height: 80,
-                                    width: 160,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Image.asset(
-                                                'assets/icons/address_work.png',
-                                                color: Colors.white,
-                                                height: 20),
-                                          ),
-                                          Text(
-                                            'Home Address',
-                                            style: TextStyle(
-                                              fontSize: 8,
-                                              color: Colors.white,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          )
-                                        ],
-                                      ),
-                                    )))
-                          ],
-                        ),
-                        // AddAddressForm(),
-                        customTextFormFieldWithoutHeading(
-                            nameController, "Name", Icon(Icons.person)),
-                        customTextFormFieldWithoutHeading(
-                            mobController, "Mobile Number", Icon(Icons.phone),
-                            inputtype: TextInputType.phone),
-                        customTextFormFieldWithoutHeading(
-                            emailController, "Email ID", Icon(Icons.email),
-                            inputtype: TextInputType.emailAddress),
-                        customTextFormFieldWithoutHeading(
-                            addressController, "Address", Icon(Icons.map),
-                            maxlines: 4),
-                        customTextFormFieldWithoutHeading(
-                            cityController, "City", Icon(Icons.map)),
-                        customTextFormFieldWithoutHeading(pincodeController,
-                            "Pincode", Icon(Icons.location_on)),
-                        customTextFormFieldWithoutHeading(
-                            stateController, "State", Icon(Icons.location_on)),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                            onTap: () {
-                              saveOrder();
-                              // ();
-                              // String address = addressController.text +
-                              //     ',' +
-                              //     cityController.text +
-                              //     ',' +
-                              //     pincodeController.text +
-                              //     ',' +
-                              //     stateController.text;
-
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) =>
-                              //             ConfirmOrder(address: address)));
-                            },
-                            child: customButton("Make Payment",
-                                color: Colors.white,
-                                icon: Icons.arrow_forward)),
-                        // Center(child: finishButton)
-                      ],
-                    ),
+      body: LayoutBuilder(
+        builder: (_, viewportConstraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints:
+                BoxConstraints(minHeight: viewportConstraints.maxHeight),
+            child: Container(
+              padding: EdgeInsets.only(
+                  // left: 6.0,
+                  // right: 6.0,
+                  bottom: MediaQuery.of(context).padding.bottom == 0
+                      ? 10
+                      : MediaQuery.of(context).padding.bottom),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TrackingList(
+                      activestep: 1, icons: AppConstants.trackingIconOrder),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: <Widget>[
+                  //     Card(
+                  //         margin: EdgeInsets.symmetric(
+                  //             vertical: 8.0, horizontal: 10),
+                  //         color: Colors.white,
+                  //         elevation: 3,
+                  //         child: SizedBox(
+                  //             height: 80,
+                  //             width: 160,
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(8.0),
+                  //               child: Column(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.center,
+                  //                 children: <Widget>[
+                  //                   Padding(
+                  //                     padding: const EdgeInsets.all(4.0),
+                  //                     child: Image.asset(
+                  //                         'assets/icons/address_home.png'),
+                  //                   ),
+                  //                   Text(
+                  //                     'Add New Address',
+                  //                     style: TextStyle(
+                  //                       fontSize: 8,
+                  //                       color: darkGrey,
+                  //                     ),
+                  //                     textAlign: TextAlign.center,
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //             ))),
+                  //     Card(
+                  //         margin: EdgeInsets.symmetric(
+                  //             vertical: 8.0, horizontal: 10),
+                  //         color: yellow,
+                  //         elevation: 3,
+                  //         child: SizedBox(
+                  //             height: 80,
+                  //             width: 160,
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(8.0),
+                  //               child: Column(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.center,
+                  //                 children: <Widget>[
+                  //                   Padding(
+                  //                     padding: const EdgeInsets.all(4.0),
+                  //                     child: Image.asset(
+                  //                         'assets/icons/address_work.png',
+                  //                         color: Colors.white,
+                  //                         height: 20),
+                  //                   ),
+                  //                   Text(
+                  //                     'Home Address',
+                  //                     style: TextStyle(
+                  //                       fontSize: 8,
+                  //                       color: Colors.white,
+                  //                     ),
+                  //                     textAlign: TextAlign.center,
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //             )))
+                  //   ],
+                  // ),
+                  // AddAddressForm(),
+                  customTextFormFieldWithoutHeading(
+                      nameController, "Name", Icon(Icons.person)),
+                  customTextFormFieldWithoutHeading(
+                      mobController, "Mobile Number", Icon(Icons.phone),
+                      inputtype: TextInputType.phone),
+                  customTextFormFieldWithoutHeading(
+                      emailController, "Email ID", Icon(Icons.email),
+                      inputtype: TextInputType.emailAddress),
+                  customTextFormFieldWithoutHeading(
+                    addressController,
+                    "Address",
+                    Icon(Icons.map),
                   ),
-                ),
+                  customTextFormFieldWithoutHeading(
+                      cityController, "City", Icon(Icons.map)),
+                  customTextFormFieldWithoutHeading(
+                      pincodeController, "Pincode", Icon(Icons.location_on)),
+                  customTextFormFieldWithoutHeading(
+                      stateController, "State", Icon(Icons.location_on)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                      onTap: () {
+                        saveOrder();
+                        // ();
+                        // String address = addressController.text +
+                        //     ',' +
+                        //     cityController.text +
+                        //     ',' +
+                        //     pincodeController.text +
+                        //     ',' +
+                        //     stateController.text;
+
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) =>
+                        //             ConfirmOrder(address: address)));
+                      },
+                      child: customButton("Make Payment",
+                          color: Colors.white, icon: Icons.arrow_forward)),
+                  // Center(child: finishButton)
+                ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }
