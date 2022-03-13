@@ -31,6 +31,7 @@ import 'package:dns/screens/shop/wishlist.dart';
 import 'package:dns/screens/sidebar.dart';
 import 'package:dns/screens/tracking_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -193,7 +194,7 @@ class _MainPageState extends State<MainPage>
                   visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
                   child: FloatingButton()),
               floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
+                  FloatingActionButtonLocation.endDocked,
               bottomNavigationBar: BottomNavBar(indexChanged: indexChanged),
               // drawerEnableOpenDragGesture: false,
               drawer: SideBar(
@@ -205,7 +206,7 @@ class _MainPageState extends State<MainPage>
                   slivers: <Widget>[
                     SliverAppBar(
                       elevation: 0,
-                      brightness: Brightness.dark,
+                      systemOverlayStyle: SystemUiOverlayStyle.dark,
                       backgroundColor: Colors.pink[900],
                       leading: Center(
                         child: CircleAvatar(
